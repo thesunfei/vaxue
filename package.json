@@ -2,6 +2,7 @@
   "name": "vaxue",
   "version": "1.0.0",
   "description": "Promise based HTTP client for the browser",
+  "keywords": ["ajax","vue","promise"],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

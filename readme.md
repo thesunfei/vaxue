@@ -63,7 +63,7 @@ Promise.all([vaxue.get("/"), vaxue.post("/")]).then(res => {
 
 you can create a new instance of vaxue with a custom config.
 
-#### vaxue.create([config],[name])
+#### vaxue.instance([config],[name])
 
 ```js
 var instance = vaxue.instance({

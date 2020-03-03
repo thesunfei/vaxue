@@ -1,0 +1,11 @@
+{
+  "name": "vaxue",
+  "version": "0.1.1-alpha.4",
+  "description": "Test version,do not install",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Fei Sun",
+  "license": "MIT"
+}

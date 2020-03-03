@@ -72,7 +72,7 @@ var instance = vaxue.instance({
         Authorization: "Bearer 263597f0-2666-42f7-bbd4-0d31eda111de"
     }
 }, newInstance);
-instance.get("/path").then(res => {
+instance.get("path").then(res => {
     console.log(res)
 })
 ```
@@ -99,9 +99,9 @@ const instance = vaxue.instance({
         Authorization: localStorage.Authorization //It will not update if this instance perform request again
     }
 })
-instance.get("/path")
-instance.get({url:"/path",params:{id:1}})
-instance.get(()=>({url:"/path",params:{id:1}}))
+instance.get("path")
+instance.get({url:"path",params:{id:1}})
+instance.get(()=>({url:"path",params:{id:1}}))
 ```
 
 ### Function-type config
@@ -115,9 +115,9 @@ const instance = vaxue.instance(()=>({
         Authorization: localStorage.Authorization //It will update everytime the instance perform request again
     }
 }))
-instance.get("/path")
-instance.get({url:"/path",params:{id:1}})
-instance.get(()=>({url:"/path",params:{id:1}}))
+instance.get("path")
+instance.get({url:"path",params:{id:1}})
+instance.get(()=>({url:"path",params:{id:1}}))
 ```
 
 ### String-type config
@@ -193,11 +193,14 @@ It's highly recommanded to use it with modern JS framewoks with responsive data 
 ```js
 var instance=vaxue.instance({baseURL:"/"});
 var data=instance.request({
-    url:"/path",
+    url:"path",
     params:{
         id:1
     },
     manual:true, //set to true will stop the request sendding unless using Request.send method
+    default:{ //value of this option will be given to data.response before ajax request,this is often used to prevent errors in JS frameworks.
+        data:[1,2,3]
+    },
     success: res=>{
         return res.data.users //the returned value will be given to common.response
     },
@@ -218,8 +221,10 @@ Using with Vue.js
     <main>
         <div>{{instance.status}}</div>
         <div>{{instance.response}}</div>
+        <div>{{instance.options}}</div>
         <div>{{basic.status}}</div>
         <div>{{basic.response}}</div>
+        <div>{{basic.options}}</div>
     </main>
 </template>
 <script>

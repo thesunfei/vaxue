@@ -201,6 +201,7 @@ var data=instance.request({
     default:{ //value of this option will be given to data.response before ajax request,this is often used to prevent errors in JS frameworks.
         data:[1,2,3]
     },
+    autoResume:3000,// status of the request will always return to "ready" after 3000 millisecond after status changed to other.
     success: res=>{
         return res.data.users //the returned value will be given to common.response
     },
@@ -212,6 +213,15 @@ var data=instance.request({
 Object.defineProperty(data,"response",{set(v){console.log(v)}}) //you can use data.response for more usage
 Object.defineProperty(data,"status",{set(v){console.log(v)}}) //you can use data.status for more usage,such as button status
 data.send();
+data.send({//send additional options to make request,it has higher priority than previous options
+    method:"post",
+    params:{
+        id:2
+    },
+    body:{
+        time:Date.now()
+    }
+});
 data.send().then(res=>{console.log(res)}).catch(e=>{console.log(e)})//"send" method returns a promise object,which equivalents to the promise returned by vaxue.ajax()
 ```
 

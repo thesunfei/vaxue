@@ -1,6 +1,6 @@
 {
   "name": "vaxue",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Promise based HTTP client for the browser",
   "keywords": ["ajax","vue","promise"],
   "main": "index.js",

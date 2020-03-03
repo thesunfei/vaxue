@@ -10,7 +10,7 @@ Promise based HTTP client for the browser
 - Transform request and response data
 - Pre-verify response JSON data
 - Cancel requests
-- Make object based request which can store request status and response data
+- Make object-based request which can store request status and response data
 
 ## Installing
 
@@ -63,7 +63,7 @@ Promise.all([vaxue.get("/"), vaxue.post("/")]).then(res => {
 
 you can create a new instance of vaxue with a custom config.
 
-#### vaxue.create([config],instance name)
+#### vaxue.create([config],[name])
 
 ```js
 var instance = vaxue.instance({
@@ -71,7 +71,7 @@ var instance = vaxue.instance({
     headers: {
         Authorization: "Bearer 263597f0-2666-42f7-bbd4-0d31eda111de"
     }
-}, newInstance);
+}, "newInstance");
 instance.get("path").then(res => {
     console.log(res)
 })
@@ -154,7 +154,7 @@ vaxue.get({url:"/"})
     sendAsJSON: true,
     // "responseType" indicates the type of data that the server will respond with,available options are:"arraybuffer",blob","document","json","text". The default is "text"
     responseType: "json",
-    // "successCodes" defines the success codes of response status,if the response status was not included by the codes,the request will result in "fail".The default is [200,304],the type of the values in the array must be number
+    // "successCodes" defines the success codes of response status,with array of numbers,if the response status was not included by the codes,the request will result in "fail".The default is [200,304],the type of the values in the array must be number
     successCodes:[200,304],
     // "strictJSON" specifies the options that the JSON-type response must match,or it will result in fail. For example the response data is {res:{code:1}},the strictJSON was set to {"res.code":0},it will performed as failed because the res.code doesn't equal to 1. The responseType of the config will be set to "json" if this option was provided.
     strictJSON:{
@@ -212,6 +212,7 @@ var data=instance.request({
 Object.defineProperty(data,"response",{set(v){console.log(v)}}) //you can use data.response for more usage
 Object.defineProperty(data,"status",{set(v){console.log(v)}}) //you can use data.status for more usage,such as button status
 data.send();
+data.send().then(res=>{console.log(res)}).catch(e=>{console.log(e)})//"send" method returns a promise object,which equivalents to the promise returned by vaxue.ajax()
 ```
 
 Using with Vue.js
@@ -225,6 +226,7 @@ Using with Vue.js
         <div>{{basic.status}}</div>
         <div>{{basic.response}}</div>
         <div>{{basic.options}}</div>
+        <v-button @click="instance.send()" :status="instance.status">Submit</v-button>
     </main>
 </template>
 <script>

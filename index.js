@@ -27,6 +27,9 @@ var vaxue = {
                 this.config = config;
         }
         this.response = this.arg.hasOwnProperty("default") ? this.arg.default : this.config.default;
+        for (let attr in arg.attrs) {
+
+        }
         this.mergeData = () => {
             this.options = {
                 ...this.config,
@@ -47,27 +50,10 @@ var vaxue = {
         }
         this.mergeData(); //merge arg data and config data into options
         this.extra = {};
-        this.send = (extra = {}) => {
+        this.send = (extra) => {
             typeof config == "function" && (this.config = config());
-            typeof arg == "function" && (this.arg = arg());
-            typeof extra == "function" ? this.extra = extra() : this.extra = extra;
+            typeof arg == "function" && (this.arg = arg(extra));
             this.mergeData();
-            this.options = {
-                ...this.options,
-                ...this.extra
-            }
-            this.options.params = {
-                ...this.options.params,
-                ...this.extra.params
-            }
-            this.options.body = {
-                ...this.options.body,
-                ...this.extra.body
-            }
-            this.options.headers = {
-                ...this.options.headers,
-                ...this.extra.headers
-            }
             this.status = "working";
             return ajax(this.options, config).then(res => {
                 this.status = "success";

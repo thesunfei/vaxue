@@ -192,14 +192,14 @@ It's highly recommanded to use it with modern JS framewoks with responsive data 
 
 ```js
 var instance=vaxue.instance({baseURL:"/"});
-var data=instance.request({
+var data=instance.request((extra)=>({//this "extra" argument will be assigned value of the first parameter of the data.send function
     url:"path",
     params:{
-        id:1
+        id:extra
     },
     manual:true, //set to true will stop the request sendding unless using Request.send method
     default:{ //value of this option will be given to data.response before ajax request,this is often used to prevent errors in JS frameworks.
-        data:[1,2,3]
+        data:[extra,extra+1,extra+2]
     },
     autoResume:3000,// status of the request will always return to "ready" after 3000 millisecond after status changed to other.
     success: res=>{
@@ -209,20 +209,11 @@ var data=instance.request({
         console.error(e)
         return "error" //the returned value will be given to common.response too
     }
-})
+}))
 Object.defineProperty(data,"response",{set(v){console.log(v)}}) //you can use data.response for more usage
 Object.defineProperty(data,"status",{set(v){console.log(v)}}) //you can use data.status for more usage,such as button status
-data.send();
-data.send({//send additional options to make request,it has higher priority than previous options
-    method:"post",
-    params:{
-        id:2
-    },
-    body:{
-        time:Date.now()
-    }
-});
-data.send().then(res=>{console.log(res)}).catch(e=>{console.log(e)})//"send" method returns a promise object,which equivalents to the promise returned by vaxue.ajax()
+data.send(100);
+data.send(200).then(res=>{console.log(res)}).catch(e=>{console.log(e)})//"send" method returns a promise object,which equivalents to the promise returned by vaxue.ajax()
 ```
 
 Using with Vue.js

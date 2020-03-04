@@ -72,12 +72,12 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
                 if (options.successCodes.indexOf(xhr.status) != -1) {
                     if (typeof xhr.response == "object" && options.strictJSON) {
                         if (verifyData(options.strictJSON, xhr.response)) {
-                            resolve(xhr.response);
+                            resolve(xhr.response,xhr);
                         } else {
                             reject(xhr);
                         }
                     } else {
-                        resolve(xhr.response)
+                        resolve(xhr.response,xhr)
                     }
                 } else {
                     reject(xhr);
@@ -86,8 +86,7 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
         };
         xhr.send(options.sendAsJSON ? JSON.stringify(options.body) : options.body);
     })
-    promise.cancel = () => {
-        xhr.abort();
-    }
+    promise.cancel = xhr.abort;
+    promise.xhr = xhr;
     return promise;
 }

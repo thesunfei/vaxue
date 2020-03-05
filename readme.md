@@ -152,7 +152,7 @@ vaxue.get({url:"/"})
     headers: {'Content-type': 'application/json'},
     // "sendAsJSON" will convert request body to JSON string,the default is false
     sendAsJSON: true,
-    // "responseType" indicates the type of data that the server will respond with,available options are:"arraybuffer",blob","document","json","text". The default is "text"
+    // "responseType" indicates the type of data that the server will respond with,available options are:"arraybuffer","blob","document","json","text". The default is "text"
     responseType: "json",
     // "successCodes" defines the success codes of response status,with array of numbers,if the response status was not included by the codes,the request will result in "fail".The default is [200,304],the type of the values in the array must be number
     successCodes:[200,304],
@@ -194,12 +194,14 @@ It's highly recommanded to use it with modern JS framewoks with responsive data 
 var instance=vaxue.instance({baseURL:"/"});
 var data=instance.request((extra)=>({//this "extra" argument will be assigned value of the first parameter of the data.send function
     url:"path",
-    params:{
-        id:extra
+    params: {
+        id: extra
     },
-    manual:true, //set to true will stop the request sendding unless using Request.send method
-    default:{ //value of this option will be given to data.response before ajax request,this is often used to prevent errors in JS frameworks.
-        data:[extra,extra+1,extra+2]
+    manual: true, //set to true will stop the request sendding unless using Request.send method
+    default: { //value of this option will be given to data.response before ajax request,this is often used to prevent errors in JS frameworks.
+        data: {
+            id:undefined
+        }
     },
     autoResume:3000,// status of the request will always return to "ready" after 3000 millisecond after status changed to other.
     success: res=>{
@@ -228,6 +230,7 @@ Using with Vue.js
         <div>{{basic.response}}</div>
         <div>{{basic.options}}</div>
         <v-button @click="instance.send()" :status="instance.status">Submit</v-button>
+        <v-button @click="basic.send(123)" :status="basic.status">Submit</v-button>
     </main>
 </template>
 <script>
@@ -239,7 +242,12 @@ export default {
     data(){
         return {
             instance:this.instance.request("path"),
-            basic:vaxue.request("/path")
+            basic:vaxue.request((id)=>({
+                url:"/path",
+                params:{
+                    id
+                }
+            }))
         }
     }
 }

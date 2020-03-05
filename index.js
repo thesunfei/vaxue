@@ -49,7 +49,7 @@ var vaxue = {
             }
         }
         this.mergeData(); //merge arg data and config data into options
-        this.extra = {};
+        this.extra = undefined;
         this.send = (extra) => {
             typeof config == "function" && (this.config = config());
             typeof arg == "function" && (this.arg = arg(extra));

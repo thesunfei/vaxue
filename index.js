@@ -26,9 +26,9 @@ var vaxue = {
             case "object":
                 this.config = config;
         }
-        this.response = this.arg.hasOwnProperty("default") ? this.arg.default : this.config.default;
+        this.res = this.response = this.arg.hasOwnProperty("default") ? this.arg.default : this.config.default;
         for (let attr in arg.attrs) {
-
+            this[attr] = arg.attrs[attr]
         }
         this.mergeData = () => {
             this.options = {
@@ -47,6 +47,7 @@ var vaxue = {
                 ...this.config.headers,
                 ...this.arg.headers
             }
+            this.options.success = this.options.success || this.options.s;
         }
         this.mergeData(); //merge arg data and config data into options
         this.extra = undefined;

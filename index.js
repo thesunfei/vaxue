@@ -58,16 +58,16 @@ var vaxue = {
             this.arg.fail = this.arg.fail || this.arg.f;
             this.config.fail = this.config.fail || this.config.f || this.config.e;
             if (this.arg.hasOwnProperty("success") && this.arg.success === undefined) {
-                delete this.success;
+                delete this.arg.success;
             }
             if (this.arg.hasOwnProperty("fail") && this.arg.fail === undefined) {
-                delete this.fail;
+                delete this.arg.fail;
             }
             if (this.config.hasOwnProperty("success") && this.config.success === undefined) {
-                delete this.success;
+                delete this.config.success;
             }
             if (this.config.hasOwnProperty("fail") && this.config.fail === undefined) {
-                delete this.fail;
+                delete this.config.fail;
             }
             this.mergeData();
             this.status = "working";

@@ -47,13 +47,16 @@ var vaxue = {
                 ...this.config.headers,
                 ...this.arg.headers
             }
-            this.options.success = this.options.success || this.options.s;
         }
         this.mergeData(); //merge arg data and config data into options
         this.extra = undefined;
         this.send = (extra) => {
             typeof config == "function" && (this.config = config());
             typeof arg == "function" && (this.arg = arg(extra));
+            this.arg.success = this.arg.success || this.arg.s;
+            this.config.success = this.config.success || this.config.s;
+            this.arg.fail = this.arg.fail || this.arg.f;
+            this.config.fail = this.config.fail || this.config.f || this.config.e;
             this.mergeData();
             this.status = "working";
             return ajax(this.options, config).then(res => {

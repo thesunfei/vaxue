@@ -1,6 +1,6 @@
 # vaxue
 
-Promise based HTTP client for the browser
+Promise based AJAX client for the browser
 
 ## Features
 

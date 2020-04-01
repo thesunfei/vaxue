@@ -44,7 +44,7 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
         options.params = undefined;
     }
     options.body = arg.body || config.body;
-    options.sendAsJSON = arg.hasOwnProperty("sendAsJSON") ? arg.sendAsJSON : (config.hasOwnProperty("sendAsJSON") ? config.sendAsJSON : true);
+    options.sendAsJSON = arg.hasOwnProperty("sendAsJSON") ? arg.sendAsJSON : (config.hasOwnProperty("sendAsJSON") ? config.sendAsJSON : (options.body && options.body.constructor == FormData ? false : true));
     options.url = (arg.baseURL || config.baseURL || "") + (arg.url || config.url);
     options.url = options.url + (options.params ? params(options.params, (options.url || "").includes("?")) : "");
     options.strictJSON = arg.strictJSON || config.strictJSON || undefined;
@@ -55,7 +55,8 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
     };
     options.timeout = arg.timeout || config.timeout;
     options.successCodes = arg.successCodes || config.successCodes || [200, 304];
-    options.xhr = arg.xhr ? arg.xhr() : (config.xhr ? config.xhr() : new XMLHttpRequest());
+    options.requestObject = arg.requestObject || config.requestObject;
+    options.xhr = arg.xhr ? arg.xhr(options.requestObject) : (config.xhr ? config.xhr(options.requestObject) : new XMLHttpRequest());
     //XHR request
     var xhr = options.xhr;
     if (!arg.xhr && !config.xhr) {
@@ -72,12 +73,12 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
                 if (options.successCodes.indexOf(xhr.status) != -1) {
                     if (typeof xhr.response == "object" && options.strictJSON) {
                         if (verifyData(options.strictJSON, xhr.response)) {
-                            resolve(xhr.response,xhr);
+                            resolve(xhr.response, xhr);
                         } else {
                             reject(xhr);
                         }
                     } else {
-                        resolve(xhr.response,xhr)
+                        resolve(xhr.response, xhr)
                     }
                 } else {
                     reject(xhr);

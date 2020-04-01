@@ -1,6 +1,6 @@
 # vaxue
 
-Promise based AJAX client for the browser
+Promise based HTTP client for the browser
 
 ## Features
 
@@ -197,6 +197,18 @@ var data=instance.request((extra)=>({//this "extra" argument will be assigned va
     params: {
         id: extra
     },
+    attrs:{//fields in attrs will preset attributes for this request object
+        total:0,
+        loaded:0
+    },
+    xhr:requestObj=>{
+        let xhr = new XMLHttpRequest();
+		xhr.upload.addEventListener("progress", e => {
+			requestObj.total = e.total;
+			requestObj.loaded = e.loaded;
+         });
+        return xhr;
+    },
     manual: true, //set to true will stop the request sendding unless using Request.send method
     default: { //value of this option will be given to data.response before ajax request,this is often used to prevent errors in JS frameworks.
         data: {
@@ -212,6 +224,7 @@ var data=instance.request((extra)=>({//this "extra" argument will be assigned va
         return "error" //the returned value will be given to common.response too
     }
 }))
+console.log(data.uploadProgress);//request object has a attribute named "uploadProgress" to present upload progress;
 Object.defineProperty(data,"response",{set(v){console.log(v)}}) //you can use data.response for more usage
 Object.defineProperty(data,"status",{set(v){console.log(v)}}) //you can use data.status for more usage,such as button status
 data.send(100);
@@ -228,9 +241,15 @@ Using with Vue.js
         <div>{{instance.options}}</div>
         <div>{{basic.status}}</div>
         <div>{{basic.response}}</div>
+        <!-- basic.res equals to basic.response -->
+        <div>{{basic.res}}</div>
         <div>{{basic.options}}</div>
         <v-button @click="instance.send()" :status="instance.status">Submit</v-button>
         <v-button @click="basic.send(123)" :status="basic.status">Submit</v-button>
+		<input type="file" @change="upload.send($event.target.files[0])">
+        <div>{{upload.uploadProgress}}</div>
+        <div>{{upload.loaded}}</div>
+        <div>{{upload.total}}</div>
     </main>
 </template>
 <script>
@@ -247,7 +266,31 @@ export default {
                 params:{
                     id
                 }
-            }))
+            })),
+            upload: this.instance.request(file => ({
+                url: "/upload",
+                method:"post",
+                attrs:{
+                    loaded:0,
+                    total:0
+                },
+                xhr:requestObj=>{//the requestObj argument represents the current request object
+                    let xhr = new XMLHttpRequest();
+					xhr.upload.addEventListener("progress", e => {
+						requestObj.total = e.total;
+						requestObj.loaded = e.loaded;
+						requestObj.uploadProgress = e.loaded / e.total;
+                    });
+                    return xhr;
+                },
+				body: (() => {
+					let fd = new FormData();
+					fd.append("file", file);
+					return fd;
+                })(),
+                default:[],
+                manual:true
+			}))
         }
     }
 }

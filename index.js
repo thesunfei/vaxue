@@ -3,10 +3,11 @@ const methods = ["get", "post", "put", "delete", "options", "patch", "head", "co
 var vaxue = {
     ajax,
     request(arg = {}, config = this.config || {}) {
-        return new(this.Request.bind(this, arg, config || this.config));
+        return new (this.Request.bind(this, arg, config || this.config));
     },
     Request: function (arg = {}, config = this.config || {}) {
         this.status = "ready";
+        this.uploadProgress = 0;
         switch (typeof arg) {
             case "string":
                 this.arg = {
@@ -27,8 +28,9 @@ var vaxue = {
                 this.config = config;
         }
         this.res = this.response = this.arg.hasOwnProperty("default") ? this.arg.default : this.config.default;
-        for (let attr in arg.attrs) {
-            this[attr] = arg.attrs[attr]
+        let tempArg = typeof arg == "function" ? arg() : arg;
+        for (let attr in tempArg.attrs) {
+            this[attr] = tempArg.attrs[attr]
         }
         this.mergeData = () => {
             this.options = {
@@ -39,14 +41,26 @@ var vaxue = {
                 ...this.config.params,
                 ...this.arg.params
             }
-            this.options.body = {
-                ...this.config.body,
-                ...this.arg.body
+            if (this.arg.body.constructor == FormData) {
+                this.options.body = this.arg.body
+            } else {
+                this.options.body = {
+                    ...this.config.body,
+                    ...this.arg.body
+                }
             }
             this.options.headers = {
                 ...this.config.headers,
                 ...this.arg.headers
             }
+            this.options.xhr = this.options.xhr || (() => {
+                let xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener("progress", (e) => {
+                    this.uploadProgress = e.loaded / e.total;
+                });
+                return xhr;
+            });
+            this.options.requestObject = this;
         }
         this.mergeData(); //merge arg data and config data into options
         this.extra = undefined;
@@ -73,11 +87,11 @@ var vaxue = {
             this.status = "working";
             return ajax(this.options, config).then(res => {
                 this.status = "success";
-                this.response = this.options.success ? this.options.success(res) : res;
+                this.res = this.response = this.options.success ? this.options.success(res) : res;
                 return res;
             }).catch(e => {
                 this.status = "fail";
-                this.response = this.options.fail ? this.options.fail(e) : e;
+                this.res = this.response = this.options.fail ? this.options.fail(e) : e;
             }).finally(() => {
                 if (this.options.autoResume) {
                     setTimeout(() => {

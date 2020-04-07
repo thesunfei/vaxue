@@ -41,7 +41,7 @@ var vaxue = {
                 ...this.config.params,
                 ...this.arg.params
             }
-            if (this.arg.body.constructor == FormData) {
+            if (this.arg.body && this.arg.body.constructor == FormData) {
                 this.options.body = this.arg.body
             } else {
                 this.options.body = {

@@ -133,46 +133,46 @@ vaxue.get({url:"/"})
 
 ```js
 {
-    // "url" is the server URL that will be used for the request
-    url: '/user',
-    // "baseURL" will be prepended to "url"
-    baseURL:"/",
-    // "method" is the request method to be used when making the request,the default is "get"
-    method: 'get',
-    // "params" are the URL parameters to be sent with the request
-    params: {
-        code:123,
-        user:"admin"
-    },
-    // "body" is the XMLHttpRequest body to be sent whith the request
-    body: {
-        date: 1583207193
-    },
-    // "headers" are custom headers to be sent
-    headers: {'Content-type': 'application/json'},
-    // "sendAsJSON" will convert request body to JSON string,the default is false
-    sendAsJSON: true,
-    // "responseType" indicates the type of data that the server will respond with,available options are:"arraybuffer","blob","document","json","text". The default is "text"
-    responseType: "json",
-    // "successCodes" defines the success codes of response status,with array of numbers,if the response status was not included by the codes,the request will result in "fail".The default is [200,304],the type of the values in the array must be number
-    successCodes:[200,304],
-    // "strictJSON" specifies the options that the JSON-type response must match,or it will result in fail. For example the response data is {res:{code:1}},the strictJSON was set to {"res.code":0},it will performed as failed because the res.code doesn't equal to 1. The responseType of the config will be set to "json" if this option was provided.
-    strictJSON:{
-        "res.code": 0
-    },
-    // `timeout` specifies the number of milliseconds before the request times out.
-    timeout: 10000,
-    // "xhr" specifies the custom XMLHttpRequest object used to make the request,it must be a function that use a XMLHttpRequest object as the return value.
-    xhr(){
-        var xhr=new XMLHttpRequest();
-        xhr.onprogress=function(event){
-            console.log(event);
-        }
-        xhr.onload=function(){
-            console.log("loaded")
-        }
-        return xhr
+  // "url" is the server URL that will be used for the request
+  url: '/user',
+  // "baseURL" will be prepended to "url"
+  baseURL:"/",
+  // "method" is the request method to be used when making the request,the default is "get"
+  method: 'get',
+  // "params" are the URL parameters to be sent with the request
+  params: {
+      code:123,
+      user:"admin"
+  },
+  // "body" is the XMLHttpRequest body to be sent whith the request
+  body: {
+      date: 1583207193
+  },
+  // "headers" are custom headers to be sent
+  headers: {'Content-type': 'application/json'},
+  // "sendAsJSON" will convert request body to JSON string,the default is false
+  sendAsJSON: true,
+  // "responseType" indicates the type of data that the server will respond with,available options are:"arraybuffer","blob","document","json","text". The default is "text"
+  responseType: "json",
+  // "successCodes" defines the success codes of response status,with array of numbers,if the response status was not included by the codes,the request will result in "fail".The default is [200,304],the type of the values in the array must be number
+  successCodes:[200,304],
+  // "strictJSON" specifies the options that the JSON-type response must match,or it will result in fail. For example the response data is {res:{code:1}},the strictJSON was set to {"res.code":0},it will performed as failed because the res.code doesn't equal to 1. The responseType of the config will be set to "json" if this option was provided.
+  strictJSON:{
+      "res.code": 0
+  },
+  // `timeout` specifies the number of milliseconds before the request times out.
+  timeout: 10000,
+  // "xhr" specifies the custom XMLHttpRequest object used to make the request,it must be a function that use a XMLHttpRequest object as the return value.
+  xhr(){
+    var xhr=new XMLHttpRequest();
+    xhr.onprogress=function(event){
+        console.log(event);
     }
+    xhr.onload=function(){
+        console.log("loaded")
+    }
+    return xhr
+  }
 }
 ```
 
@@ -195,33 +195,33 @@ var instance=vaxue.instance({baseURL:"/"});
 var data=instance.request((extra)=>({//this "extra" argument will be assigned value of the first parameter of the data.send function
     url:"path",
     params: {
-        id: extra
+      id: extra
     },
     attrs:{//fields in attrs will preset attributes for this request object
         total:0,
         loaded:0
     },
     xhr:requestObj=>{
-        let xhr = new XMLHttpRequest();
-		xhr.upload.addEventListener("progress", e => {
-			requestObj.total = e.total;
-			requestObj.loaded = e.loaded;
-         });
-        return xhr;
+      let xhr = new XMLHttpRequest();
+      xhr.upload.addEventListener("progress", e => {
+          requestObj.total = e.total;
+          requestObj.loaded = e.loaded;
+        });
+      return xhr;
     },
     manual: true, //set to true will stop the request sendding unless using Request.send method
     default: { //value of this option will be given to data.response before ajax request,this is often used to prevent errors in JS frameworks.
-        data: {
-            id:undefined
-        }
+      data: {
+          id:undefined
+      }
     },
     autoResume:3000,// status of the request will always return to "ready" after 3000 millisecond after status changed to other.
     success: res=>{
-        return res.data.users //the returned value will be given to common.response
+      return res.data.users //the returned value will be given to common.response
     },
     fail: e=>{
-        console.error(e)
-        return "error" //the returned value will be given to common.response too
+      console.error(e)
+      return "error" //the returned value will be given to common.response too
     }
 }))
 console.log(data.uploadProgress);//request object has a attribute named "uploadProgress" to present upload progress;
@@ -235,22 +235,22 @@ Using with Vue.js
 
 ```html
 <template>
-    <main>
-        <div>{{instance.status}}</div>
-        <div>{{instance.response}}</div>
-        <div>{{instance.options}}</div>
-        <div>{{basic.status}}</div>
-        <div>{{basic.response}}</div>
-        <!-- basic.res equals to basic.response -->
-        <div>{{basic.res}}</div>
-        <div>{{basic.options}}</div>
-        <v-button @click="instance.send()" :status="instance.status">Submit</v-button>
-        <v-button @click="basic.send(123)" :status="basic.status">Submit</v-button>
-		<input type="file" @change="upload.send($event.target.files[0])">
-        <div>{{upload.uploadProgress}}</div>
-        <div>{{upload.loaded}}</div>
-        <div>{{upload.total}}</div>
-    </main>
+  <main>
+    <div>{{instance.status}}</div>
+    <div>{{instance.response}}</div>
+    <div>{{instance.options}}</div>
+    <div>{{basic.status}}</div>
+    <div>{{basic.response}}</div>
+    <!-- basic.res equals to basic.response -->
+    <div>{{basic.res}}</div>
+    <div>{{basic.options}}</div>
+    <v-button @click="instance.send()" :status="instance.status">Submit</v-button>
+    <v-button @click="basic.send(123)" :status="basic.status">Submit</v-button>
+    <input type="file" @change="upload.send($event.target.files[0])">
+    <div>{{upload.uploadProgress}}</div>
+    <div>{{upload.loaded}}</div>
+    <div>{{upload.total}}</div>
+  </main>
 </template>
 <script>
 import vue from "vue"
@@ -258,41 +258,41 @@ import vaxue from "vaxue"
 var instance=vaxue.instance("/");
 vue.prototype.instance=instance;
 export default {
-    data(){
-        return {
-            instance:this.instance.request("path"),
-            basic:vaxue.request((id)=>({
-                url:"/path",
-                params:{
-                    id
-                }
-            })),
-            upload: this.instance.request(file => ({
-                url: "/upload",
-                method:"post",
-                attrs:{
-                    loaded:0,
-                    total:0
-                },
-                xhr:requestObj=>{//the requestObj argument represents the current request object
-                    let xhr = new XMLHttpRequest();
-					xhr.upload.addEventListener("progress", e => {
-						requestObj.total = e.total;
-						requestObj.loaded = e.loaded;
-						requestObj.uploadProgress = e.loaded / e.total;
-                    });
-                    return xhr;
-                },
-				body: (() => {
-					let fd = new FormData();
-					fd.append("file", file);
-					return fd;
-                })(),
-                default:[],
-                manual:true
-			}))
+  data(){
+    return {
+      instance:this.instance.request("path"),
+      basic:vaxue.request((id)=>({
+        url:"/path",
+        params:{
+          id
         }
+      })),
+      upload: this.instance.request(file => ({
+        url: "/upload",
+        method:"post",
+        attrs:{
+          loaded:0,
+          total:0
+        },
+        xhr:requestObj=>{//the requestObj argument represents the current request object
+          let xhr = new XMLHttpRequest();
+          xhr.upload.addEventListener("progress", e => {
+            requestObj.total = e.total;
+            requestObj.loaded = e.loaded;
+            requestObj.uploadProgress = e.loaded / e.total;
+          });
+          return xhr;
+        },
+        body: (() => {
+          let fd = new FormData();
+          fd.append("file", file);
+          return fd;
+        })(),
+        default:[],
+        manual:true
+      }))
     }
+  }
 }
 </script>
 ```

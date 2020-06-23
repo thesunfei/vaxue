@@ -1,6 +1,6 @@
 # vaxue
 
-Promise based HTTP client for the browser
+Promise based AJAX client for the browser
 
 ## Features
 
@@ -255,7 +255,7 @@ Using with Vue.js
 <script>
 import vue from "vue"
 import vaxue from "vaxue"
-var instance=vaxue.instance("/");
+var instance=vaxue.instance({baseURL:"/"});
 vue.prototype.instance=instance;
 export default {
   data(){

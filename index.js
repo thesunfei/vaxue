@@ -3,7 +3,7 @@ const methods = ["get", "post", "put", "delete", "options", "patch", "head", "co
 var vaxue = {
     ajax,
     request(arg = {}, config = this.config || {}) {
-        return new (this.Request.bind(this, arg, config || this.config));
+        return new(this.Request.bind(this, arg, config || this.config));
     },
     Request: function (arg = {}, config = this.config || {}) {
         this.status = "ready";
@@ -107,7 +107,9 @@ var vaxue = {
     },
     instance(config = {}, name = null) {
         var instance = {
-            config,
+            config: typeof config == "string" ? {
+                baseURL: config
+            } : config,
             ajax: this.ajax,
             request: this.request,
             Request: this.Request

@@ -47,7 +47,7 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
     options.sendAsJSON = arg.hasOwnProperty("sendAsJSON") ? arg.sendAsJSON : (config.hasOwnProperty("sendAsJSON") ? config.sendAsJSON : (options.body && options.body.constructor == FormData ? false : true));
     options.url = (arg.baseURL || config.baseURL || "") + (arg.url || config.url);
     options.url = options.url + (options.params ? params(options.params, (options.url || "").includes("?")) : "");
-    options.strictJSON = arg.strictJSON || config.strictJSON || undefined;
+    options.strictJSON = arg.hasOwnProperty("strictJSON") ? arg.strictJSON : config.strictJSON;
     options.responseType = options.strictJSON ? "json" : (arg.responseType || config.responseType || "text");
     options.headers = {
         ...config.headers,

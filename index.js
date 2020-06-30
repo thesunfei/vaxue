@@ -103,7 +103,7 @@ var vaxue = {
         this.retry = () => {
             this.send()
         };
-        !this.options.manual && this.send();
+        !this.options.manual && setTimeout(this.send, 0);
     },
     instance(config = {}, name = null) {
         var instance = {

@@ -41,7 +41,7 @@ vaxue.ajax("http://test.test").then(res => {
 }).catch(e => {
     console.log(e)
 }).finally(() => {})
-//Specify request method with function name,supported methods are "get","post","put","delte","options","patch","head","copy","view"
+//Specify request method with function name,supported methods are "get","post","put","delete","options","patch","head","copy","view"
 vaxue.post("http://test.test").then(res => {
     console.log(res)
 }).catch(e => {
@@ -122,10 +122,10 @@ instance.get(()=>({url:"path",params:{id:1}}))
 
 ### String-type config
 
-String-type config equal to object-type config with only url attribute;
+String-type config is equal to object-type config with only url attribute;
 
 ```js
-vaxue.get("/")//equal to
+vaxue.get("/")//is equal to
 vaxue.get({url:"/"})
 ```
 
@@ -156,7 +156,7 @@ vaxue.get({url:"/"})
   responseType: "json",
   // "successCodes" defines the success codes of response status,with array of numbers,if the response status was not included by the codes,the request will result in "fail".The default is [200,304],the type of the values in the array must be number
   successCodes:[200,304],
-  // "strictJSON" specifies the options that the JSON-type response must match,or it will result in fail. For example the response data is {res:{code:1}},the strictJSON was set to {"res.code":0},it will performed as failed because the res.code doesn't equal to 1. The responseType of the config will be set to "json" if this option was provided.
+  // "strictJSON" specifies the options that the JSON-type response must match,or it will result in fail. For example the response data is {res:{code:1}},the strictJSON was set to {"res.code":0},it will performed as failed because the res.code doesn't equal 1. The responseType of the config will be set to "json" if this option was provided.
   strictJSON:{
       "res.code": 0
   },
@@ -241,7 +241,7 @@ Using with Vue.js
     <div>{{instance.options}}</div>
     <div>{{basic.status}}</div>
     <div>{{basic.response}}</div>
-    <!-- basic.res equals to basic.response -->
+    <!-- basic.res equals basic.response -->
     <div>{{basic.res}}</div>
     <div>{{basic.options}}</div>
     <v-button @click="instance.send()" :status="instance.status">Submit</v-button>
@@ -250,6 +250,13 @@ Using with Vue.js
     <div>{{upload.uploadProgress}}</div>
     <div>{{upload.loaded}}</div>
     <div>{{upload.total}}</div>
+    <div>{{list.pageSize}}</div>
+    <div>{{list.currentPage}}</div>
+    <div>{{list.total}}</div>
+    <ul>
+      <li v-for="i in list.res">{{i.id}}</li>
+    </ul>
+    <button @click="currentPage++;list.send(currentPage)"></button>
   </main>
 </template>
 <script>
@@ -257,14 +264,47 @@ import vue from "vue"
 import vaxue from "vaxue"
 var instance=vaxue.instance({baseURL:"/"});
 vue.prototype.instance=instance;
+vue.prototype.listInstance=vaxue.instance(() => ({
+    baseURL: "/",
+    headers: {
+        Authorization: "Bearer " + localStorage.access_token
+    },
+    strictJSON: {
+        "code": 0
+    },
+    default:[],
+    attrs: {
+        total: 0,
+        currentPage: 0,
+        pageSize: 10,
+    },
+    s: (res, requestObj) => {//the requestObj argument represents the current request object
+        requestObj.total = res.total;
+        requestObj.currentPage = res.currentPage;
+        requestObj.pageSize = res.pageSize;
+        return res.data;
+    },
+    fail:(e, requestObj)=>{
+      return false
+    }
+}))
 export default {
   data(){
     return {
+      type:this.$route.params.type,
       instance:this.instance.request("path"),
       basic:vaxue.request((id)=>({
         url:"/path",
         params:{
-          id
+          id,
+          type: this.type
+        }
+      })),
+      currentPage:1,
+      list:this.listInstance.request((currentPage)=>({
+        url:"",
+        params:{
+          currentPage
         }
       })),
       upload: this.instance.request(file => ({

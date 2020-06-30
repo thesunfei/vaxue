@@ -87,11 +87,11 @@ var vaxue = {
             this.status = "working";
             return ajax(this.options, config).then(res => {
                 this.status = "success";
-                this.res = this.response = this.options.success ? this.options.success(res) : res;
+                this.res = this.response = this.options.success ? this.options.success(res, this) : res;
                 return res;
             }).catch(e => {
                 this.status = "fail";
-                this.res = this.response = this.options.fail ? this.options.fail(e) : e;
+                this.res = this.response = this.options.fail ? this.options.fail(e, this) : e;
             }).finally(() => {
                 if (this.options.autoResume) {
                     setTimeout(() => {

@@ -1,7 +1,9 @@
 function params(obj, add) {
     var ret = "";
     for (let i in obj) {
-        ret += i + "=" + obj[i] + "&"
+        if (obj[i] !== undefined) {
+            ret += i + "=" + obj[i] + "&"
+        }
     }
     return (add ? "&" : "?") + ret.slice(0, -1);
 }

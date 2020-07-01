@@ -1,6 +1,6 @@
 # vaxue
 
-Promise based AJAX client for the browser
+Promise based AJAX client for the browser,especially optimized for Vue.js
 
 ## Features
 
@@ -256,7 +256,7 @@ Using with Vue.js
     <ul>
       <li v-for="i in list.res">{{i.id}}</li>
     </ul>
-    <button @click="currentPage++;list.send(currentPage)"></button>
+    <button @click="list.currentPage++;list.send(10)"></button>
   </main>
 </template>
 <script>
@@ -264,7 +264,7 @@ import vue from "vue"
 import vaxue from "vaxue"
 var instance=vaxue.instance({baseURL:"/"});
 vue.prototype.instance=instance;
-vue.prototype.listInstance=vaxue.instance(() => ({
+vue.prototype.listInstance=vaxue.instance((extra,requestObj) => ({//the requestObj argument represents the current request object
     baseURL: "/",
     headers: {
         Authorization: "Bearer " + localStorage.access_token
@@ -276,7 +276,11 @@ vue.prototype.listInstance=vaxue.instance(() => ({
     attrs: {
         total: 0,
         currentPage: 0,
-        pageSize: 10,
+        pageSize: extra,
+    },
+    params: {
+        pageSize: requestObj.pageSize,
+        currentPage: requestObj.currentPage
     },
     s: (res, requestObj) => {//the requestObj argument represents the current request object
         requestObj.total = res.total;
@@ -300,11 +304,11 @@ export default {
           type: this.type
         }
       })),
-      currentPage:1,
-      list:this.listInstance.request((currentPage)=>({
+      list:this.listInstance.request((extra,requestObj)=>({
         url:"",
-        params:{
-          currentPage
+        s:res=>{
+          console.log(extra);//output: 10
+          return res.data;
         }
       })),
       upload: this.instance.request(file => ({

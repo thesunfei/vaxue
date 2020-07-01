@@ -15,22 +15,24 @@ var vaxue = {
                 };
                 break;
             case "function":
-                this.arg = arg();
+                this.arg = arg(undefined, this);
                 break;
             case "object":
                 this.arg = arg;
         }
         switch (typeof config) {
             case "function":
-                this.config = config();
+                this.config = config(undefined, this);
                 break;
             case "object":
                 this.config = config;
         }
         this.res = this.response = this.arg.hasOwnProperty("default") ? this.arg.default : this.config.default;
-        let tempArg = typeof arg == "function" ? arg() : arg;
-        for (let attr in tempArg.attrs) {
-            this[attr] = tempArg.attrs[attr]
+        for (let attr in this.config.attrs) {
+            this[attr] = this.config.attrs[attr]
+        }
+        for (let attr in this.arg.attrs) {
+            this[attr] = this.arg.attrs[attr]
         }
         this.mergeData = () => {
             this.options = {
@@ -65,8 +67,8 @@ var vaxue = {
         this.mergeData(); //merge arg data and config data into options
         this.extra = undefined;
         this.send = (extra) => {
-            typeof config == "function" && (this.config = config());
-            typeof arg == "function" && (this.arg = arg(extra));
+            typeof config == "function" && (this.config = config(extra, this));
+            typeof arg == "function" && (this.arg = arg(extra, this));
             this.arg.success = this.arg.success || this.arg.s;
             this.config.success = this.config.success || this.config.s;
             this.arg.fail = this.arg.fail || this.arg.f;
@@ -85,7 +87,7 @@ var vaxue = {
             }
             this.mergeData();
             this.status = "working";
-            return ajax(this.options, config).then(res => {
+            return ajax(this.options, this.config).then(res => {
                 this.status = "success";
                 this.res = this.response = this.options.success ? this.options.success(res, this) : res;
                 return res;

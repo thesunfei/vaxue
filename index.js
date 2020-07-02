@@ -48,9 +48,13 @@ var vaxue = {
             if (this.arg.body && this.arg.body.constructor == FormData) {
                 this.options.body = this.arg.body
             } else {
-                this.options.body = {
-                    ...this.config.body,
-                    ...this.arg.body
+                if (Array.isArray(this.arg.body)) {
+                    this.options.body = [...(this.config.body || []), ...(this.arg.body || [])];
+                } else {
+                    this.options.body = {
+                        ...this.config.body,
+                        ...this.arg.body
+                    }
                 }
             }
             this.options.headers = {

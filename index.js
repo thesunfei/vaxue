@@ -7,7 +7,9 @@ var vaxue = {
     },
     Request: function (arg = {}, config = this.config || {}) {
         this.status = "ready";
+        this.ajaxStack = 0;
         this.uploadProgress = 0;
+        this.lastRequest = undefined;
         switch (typeof arg) {
             case "string":
                 this.arg = {
@@ -63,6 +65,7 @@ var vaxue = {
                 return xhr;
             });
             this.options.requestObject = this;
+            this.options.unique === undefined && (this.options.unique = true);
         }
         this.mergeData(); //merge arg data and config data into options
         this.extra = undefined;
@@ -87,7 +90,11 @@ var vaxue = {
             }
             this.mergeData();
             this.status = "working";
-            return ajax(this.options, this.config).then(res => {
+            if (this.lastRequest && !this.lastRequest.canceled && this.options.unique) {
+                this.lastRequest.cancel();
+            }
+            this.lastRequest = ajax(this.options, this.config);
+            this.lastRequest.then(res => {
                 this.status = "success";
                 this.res = this.response = this.options.success ? this.options.success(res, this) : res;
                 return res;
@@ -101,6 +108,7 @@ var vaxue = {
                     }, this.options.autoResume)
                 }
             })
+            return this.lastRequest;
         }
         this.retry = () => {
             this.send()

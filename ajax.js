@@ -71,7 +71,9 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
     }
     var promise = new Promise((resolve, reject) => {
         xhr.onreadystatechange = () => {
-            if (xhr.readyState == 4) {
+            if (xhr.tryCancel) {
+                //reserved for future function
+            } else if (xhr.readyState == 4) {
                 if (options.successCodes.indexOf(xhr.status) != -1) {
                     if (typeof xhr.response == "object" && options.strictJSON) {
                         if (verifyData(options.strictJSON, xhr.response)) {
@@ -87,9 +89,15 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
                 }
             }
         };
+        xhr.addEventListener("abort", function () {
+            xhr.canceled = promise.canceled = true;
+        });
         xhr.send(options.sendAsJSON ? JSON.stringify(options.body) : options.body);
     })
-    promise.cancel = xhr.abort;
+    promise.cancel = function () {
+        promise.tryCancel = xhr.tryCancel = true;
+        xhr.abort();
+    };
     promise.xhr = xhr;
     return promise;
 }

@@ -10,6 +10,7 @@ var vaxue = {
         this.ajaxStack = 0;
         this.uploadProgress = 0;
         this.lastRequest = undefined;
+        this.options = {};
         switch (typeof arg) {
             case "string":
                 this.arg = {
@@ -23,6 +24,11 @@ var vaxue = {
                 this.arg = arg;
         }
         switch (typeof config) {
+            case "string":
+                this.config = {
+                    baseURL: config
+                };
+                break;
             case "function":
                 this.config = config(undefined, this);
                 break;
@@ -36,7 +42,7 @@ var vaxue = {
         for (let attr in this.arg.attrs) {
             this[attr] = this.arg.attrs[attr]
         }
-        this.mergeData = () => {
+        this.mergeData = () => { //merge arg data and config data into options
             this.options = {
                 ...this.config,
                 ...this.arg,
@@ -71,7 +77,10 @@ var vaxue = {
             this.options.requestObject = this;
             this.options.unique === undefined && (this.options.unique = true);
         }
-        this.mergeData(); //merge arg data and config data into options
+        setTimeout(() => {
+            this.mergeData();
+            !this.options.manual && setTimeout(this.send, 0);
+        }, 0);
         this.extra = undefined;
         this.send = (extra) => {
             typeof config == "function" && (this.config = config(extra, this));
@@ -117,7 +126,6 @@ var vaxue = {
         this.retry = () => {
             this.send()
         };
-        !this.options.manual && setTimeout(this.send, 0);
     },
     instance(config = {}, name = null) {
         var instance = {

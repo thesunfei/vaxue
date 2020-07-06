@@ -90,12 +90,14 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
             }
         };
         xhr.addEventListener("abort", function () {
-            xhr.canceled = promise.canceled = true;
+            xhr.canceled =  true;
+            promise.canceled = true;
         });
         xhr.send(options.sendAsJSON ? JSON.stringify(options.body) : options.body);
     })
     promise.cancel = function () {
-        promise.tryCancel = xhr.tryCancel = true;
+        promise.tryCancel = true;
+        xhr.tryCancel = true;
         xhr.abort();
     };
     promise.xhr = xhr;

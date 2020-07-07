@@ -182,12 +182,13 @@ You can cancel a request using returned promise.
 
 ```js
 var pro=vaxue.get("/");
-pro.cancel();
+pro.cancel();//pro.canceled===true
 ```
 
 ## Request object
 
-Request object can store request status and response data in one object. Available request status are "ready","working","success" and "fail".
+Request object can store request status and response data in one object. Available request status are "ready","working","success" and "fail" by default,
+they can be changed by using "readyFlag","workingFlag","successFlag" and "failFlag".
 It's highly recommanded to use it with modern JS framewoks with responsive data design.
 
 ```js
@@ -201,6 +202,7 @@ var data=instance.request((extra)=>({//this "extra" argument will be assigned va
         total:0,
         loaded:0
     },
+    successFlag:"success",
     xhr:requestObj=>{
       let xhr = new XMLHttpRequest();
       xhr.upload.addEventListener("progress", e => {
@@ -283,7 +285,7 @@ vue.prototype.listInstance=vaxue.instance((extra,requestObj) => ({//the requestO
         pageSize: requestObj.pageSize,
         currentPage: requestObj.currentPage
     },
-    s: (res, requestObj) => {//the requestObj argument represents the current request object
+    s: (res, requestObj) => {//s function equals to the success function,the requestObj argument represents the current request object
         requestObj.total = res.total;
         requestObj.currentPage = res.currentPage;
         requestObj.pageSize = res.pageSize;
@@ -319,6 +321,7 @@ export default {
           loaded:0,
           total:0
         },
+        workingFlag:"uploading",
         xhr:requestObj=>{//the requestObj argument represents the current request object
           let xhr = new XMLHttpRequest();
           xhr.upload.addEventListener("progress", e => {

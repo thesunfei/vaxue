@@ -76,12 +76,10 @@ var vaxue = {
             });
             this.options.requestObject = this;
             this.options.unique === undefined && (this.options.unique = true);
-            this.status = this.options.hasOwnProperty("readyFlag") ? this.options.readyFlag : "ready";;
+            this.status = this.options.hasOwnProperty("readyFlag") ? this.options.readyFlag : "ready";
         }
-        setTimeout(() => {
-            this.mergeData();
-            !this.options.manual && setTimeout(this.send, 0);
-        }, 0);
+        this.mergeData();
+        !this.options.manual && setTimeout(this.send, 0);
         this.extra = undefined;
         this.send = (extra) => {
             typeof config == "function" && (this.config = config(extra, this));
@@ -103,7 +101,7 @@ var vaxue = {
                 delete this.config.fail;
             }
             this.mergeData();
-            this.status = this.options.hasOwnProperty("workingFlag") ? this.options.workingFlag : "working";;
+            this.status = this.options.hasOwnProperty("workingFlag") ? this.options.workingFlag : "working";
             if (this.lastRequest && !this.lastRequest.canceled && this.options.unique) {
                 this.lastRequest.cancel();
             }

@@ -10,6 +10,7 @@ var vaxue = {
         this.ajaxStack = 0;
         this.uploadProgress = 0;
         this.lastRequest = undefined;
+        this.extra = undefined;
         this.options = {};
         switch (typeof arg) {
             case "string":
@@ -82,6 +83,7 @@ var vaxue = {
         !this.options.manual && setTimeout(this.send, 0);
         this.extra = undefined;
         this.send = (extra) => {
+            this.extra = extra;
             typeof config == "function" && (this.config = config(extra, this));
             typeof arg == "function" && (this.arg = arg(extra, this));
             this.arg.success = this.arg.success || this.arg.s;
@@ -122,8 +124,8 @@ var vaxue = {
             })
             return this.lastRequest;
         }
-        this.retry = () => {
-            this.send()
+        this.retry = (extra) => {
+            return this.send(extra || this.extra)
         };
     },
     instance(config = {}, name = null) {

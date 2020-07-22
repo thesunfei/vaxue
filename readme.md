@@ -231,7 +231,9 @@ console.log(data.uploadProgress);//request object has a attribute named "uploadP
 Object.defineProperty(data,"response",{set(v){console.log(v)}}) //you can use data.response for more usage
 Object.defineProperty(data,"status",{set(v){console.log(v)}}) //you can use data.status for more usage,such as button status
 data.send(100);
-data.send(200).then(res=>{console.log(res)}).catch(e=>{console.log(e)})//"send" method returns a promise object,which equivalents to the promise returned by vaxue.ajax()
+data.send(200).then(res=>{console.log(res)}).catch(e=>{console.log(e)})//"send" method returns a promise object,which equals to the promise returned by vaxue.ajax()
+data.retry().then(res=>{console.log(res)}).catch(e=>{console.log(e)});//"retry" method will re-execute the previous opration invoked by "send" method,the used parameter is also applied.
+data.retry(300)//you can also use the "extra" parameter for this method.
 ```
 
 Using with Vue.js

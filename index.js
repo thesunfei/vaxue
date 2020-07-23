@@ -80,7 +80,6 @@ var vaxue = {
             this.status = this.options.hasOwnProperty("readyFlag") ? this.options.readyFlag : "ready";
         }
         this.mergeData();
-        !this.options.manual && setTimeout(this.send, 0);
         this.extra = undefined;
         this.send = (extra) => {
             this.extra = extra;
@@ -110,6 +109,7 @@ var vaxue = {
             this.lastRequest = ajax(this.options, this.config);
             this.lastRequest.then(res => {
                 this.status = this.options.hasOwnProperty("successFlag") ? this.options.successFlag : "success";
+                this.options.sBefore && this.options.sBefore(res, this);
                 this.res = this.response = this.options.success ? this.options.success(res, this) : res;
                 return res;
             }).catch(e => {
@@ -123,7 +123,8 @@ var vaxue = {
                 }
             })
             return this.lastRequest;
-        }
+        };
+        !this.options.manual && setTimeout(this.send, 0);
         this.retry = (extra) => {
             return this.send(extra || this.extra)
         };

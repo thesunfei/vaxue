@@ -112,6 +112,9 @@ var vaxue = {
                 this.options.sBefore && this.options.sBefore(res, this);
                 this.res = this.response = this.options.success ? this.options.success(res, this) : res;
                 return res;
+            }).then(res => {
+                this.options.sAfter && this.options.sAfter(res, this);
+                return res;
             }).catch(e => {
                 this.status = this.options.hasOwnProperty("failFlag") ? this.options.failFlag : "fail";
                 this.res = this.response = this.options.fail ? this.options.fail(e, this) : e;

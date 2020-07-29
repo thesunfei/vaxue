@@ -219,8 +219,14 @@ var data=instance.request((extra)=>({//this "extra" argument will be assigned va
     },
     unique:true,//the previous ajax request will be canceled if it's not done,this is very useful for frequent request to prevent old data to overwrite new data.the default is true.
     autoResume:3000,// status of the request will always return to "ready" after 3000 millisecond after status changed to other.the default is false
+    sBefore: res=>{//this function will be executed before the "success" function
+      console.log(res)
+    },
     success: res=>{
       return res.data.users //the returned value will be given to common.response
+    },
+    sAfter: res=>{//this function will be executed after the "success" function
+      console.log(res)
     },
     fail: e=>{
       console.error(e)
@@ -311,6 +317,9 @@ export default {
       })),
       list:this.listInstance.request((extra,requestObj)=>({
         url:"",
+        sBefore:res=>{
+          console.log(res)
+        },
         s:res=>{
           console.log(extra);//output: 10
           return res.data;

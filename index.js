@@ -77,9 +77,9 @@ var vaxue = {
             });
             this.options.requestObject = this;
             this.options.unique === undefined && (this.options.unique = true);
-            this.status = this.options.hasOwnProperty("readyFlag") ? this.options.readyFlag : "ready";
         }
         this.mergeData();
+        this.status = this.options.hasOwnProperty("readyFlag") ? this.options.readyFlag : "ready";
         this.extra = undefined;
         this.send = (extra) => {
             this.extra = extra;

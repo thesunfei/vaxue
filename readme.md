@@ -172,7 +172,8 @@ vaxue.get({url:"/"})
         console.log("loaded")
     }
     return xhr
-  }
+  },
+  trim: true //whether trim values of headers,params and body,the default is false
 }
 ```
 

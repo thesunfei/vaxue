@@ -8,6 +8,14 @@ function params(obj, add) {
     return (add ? "&" : "?") + ret.slice(0, -1);
 }
 
+function trim(arr) {
+    for (let i in arr) {
+        if (typeof arr[i] == "string") {
+            arr[i] = arr[i].trim();
+        }
+    }
+}
+
 function verifyData(restriction, obj) {
     var passed = true;
     for (var path in restriction) {
@@ -38,6 +46,7 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
         }
         typeof config == "function" && (config = config());
         var options = {};
+        options.trim = arg.hasOwnProperty("trim") ? arg.trim : config.trim;
         options.method = (arg.method || config.method || "get").toUpperCase();
         options.params = {
             ...config.params,
@@ -60,6 +69,11 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
         options.successCodes = arg.successCodes || config.successCodes || [200, 304];
         options.requestObject = arg.requestObject || config.requestObject;
         options.xhr = arg.xhr ? arg.xhr(options.requestObject) : (config.xhr ? config.xhr(options.requestObject) : new XMLHttpRequest());
+        if (options.trim) {
+            trim(options.headers);
+            trim(options.params);
+            trim(options.body);
+        }
         //XHR request
         var xhr = options.xhr;
         if (!arg.xhr && !config.xhr) {

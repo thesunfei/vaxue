@@ -68,7 +68,7 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
         options.timeout = arg.timeout || config.timeout;
         options.successCodes = arg.successCodes || config.successCodes || [200, 304];
         options.requestObject = arg.requestObject || config.requestObject;
-        options.xhr = arg.xhr ? arg.xhr(options.requestObject) : (config.xhr ? config.xhr(options.requestObject) : new XMLHttpRequest());
+        options.xhr = arg.xhr ? (typeof arg.xhr == "function" ? arg.xhr(options.requestObject) : arg.xhr) : (config.xhr ? (typeof config.xhr == "function" ? config.xhr(options.requestObject) : config.xhr) : new XMLHttpRequest());
         if (options.trim) {
             trim(options.headers);
             trim(options.params);
@@ -84,9 +84,10 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
         for (let i in options.headers) {
             xhr.setRequestHeader(i, typeof options.headers[i] == "function" ? options.headers[i]() : options.headers[i]);
         }
+        var tryCancel = false;
         var promise = new Promise((resolve, reject) => {
             xhr.onreadystatechange = () => {
-                if (xhr.tryCancel) {
+                if (tryCancel) {
                     //reserved for future function
                 } else if (xhr.readyState == 4) {
                     var response = xhr.response;
@@ -113,23 +114,22 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
                 }
             };
             xhr.addEventListener("abort", function () {
-                xhr.canceled = true;
                 promise.canceled = true;
             });
             try {
                 xhr.send(options.sendAsJSON ? JSON.stringify(options.body) : ((options.headers["Content-Type"] || "").includes("application/x-www-form-urlencoded") ? params(options.body, true).slice(1, Infinity) : options.body));
             } catch (e) {
-                console.log(e)
+                console.error(e)
             }
         })
         promise.cancel = function () {
             promise.tryCancel = true;
-            xhr.tryCancel = true;
+            tryCancel = true;
             xhr.abort();
         };
         promise.xhr = xhr;
         return promise;
     } catch (e) {
-        console.log(e)
+        console.error(e)
     }
 }

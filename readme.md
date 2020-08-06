@@ -241,6 +241,7 @@ data.send(100);
 data.send(200).then(res=>{console.log(res)}).catch(e=>{console.log(e)})//"send" method returns a promise object,which equals to the promise returned by vaxue.ajax()
 data.retry().then(res=>{console.log(res)}).catch(e=>{console.log(e)});//"retry" method will re-execute the previous opration invoked by "send" method,the used parameter is also applied.
 data.retry(300)//you can also use the "extra" parameter for this method.
+console.log(data.xhr);//you can get the original XMLHttpRequest with the xhr property
 ```
 
 Using with Vue.js
@@ -253,7 +254,7 @@ Using with Vue.js
     <div>{{instance.options}}</div>
     <div>{{basic.status}}</div>
     <div>{{basic.response}}</div>
-    <!-- basic.res equals basic.response -->
+    <!-- basic.res equals to basic.response -->
     <div>{{basic.res}}</div>
     <div>{{basic.options}}</div>
     <v-button @click="instance.send()" :status="instance.status">Submit</v-button>
@@ -265,6 +266,7 @@ Using with Vue.js
     <div>{{list.pageSize}}</div>
     <div>{{list.currentPage}}</div>
     <div>{{list.total}}</div>
+    <div>{{list.xhr.status}}</div>
     <ul>
       <li v-for="i in list.res">{{i.id}}</li>
     </ul>
@@ -316,7 +318,7 @@ export default {
           type: this.type
         }
       })),
-      list:this.listInstance.request((extra,requestObj)=>({
+      list:this.listInstance.request((extra,requestObj)=>({//the requestObj argument represents the current request object
         url:"",
         sBefore:res=>{
           console.log(res)

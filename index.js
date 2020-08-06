@@ -12,6 +12,13 @@ var vaxue = {
         this.lastRequest = undefined;
         this.extra = undefined;
         this.options = {};
+        this.xhr = (() => {
+            let xhr = new XMLHttpRequest();
+            xhr.upload.addEventListener("progress", (e) => {
+                this.uploadProgress = e.loaded / e.total;
+            });
+            return xhr;
+        })();
         switch (typeof arg) {
             case "string":
                 this.arg = {
@@ -68,13 +75,7 @@ var vaxue = {
                 ...this.config.headers,
                 ...this.arg.headers
             }
-            this.options.xhr = this.options.xhr || (() => {
-                let xhr = new XMLHttpRequest();
-                xhr.upload.addEventListener("progress", (e) => {
-                    this.uploadProgress = e.loaded / e.total;
-                });
-                return xhr;
-            });
+            this.options.xhr = this.options.xhr ? (typeof this.options.xhr == "function" ? this.options.xhr(this) : this.options.xhr) : this.xhr;
             this.options.requestObject = this;
             this.options.unique === undefined && (this.options.unique = true);
         }
@@ -102,6 +103,7 @@ var vaxue = {
                 delete this.config.fail;
             }
             this.mergeData();
+            this.xhr = this.options.xhr;
             this.status = this.options.hasOwnProperty("workingFlag") ? this.options.workingFlag : "working";
             if (this.lastRequest && !this.lastRequest.canceled && this.options.unique) {
                 this.lastRequest.cancel();

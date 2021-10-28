@@ -120,6 +120,7 @@ var vaxue = {
             }).catch(e => {
                 this.status = this.options.hasOwnProperty("failFlag") ? this.options.failFlag : "fail";
                 this.res = this.response = this.options.fail ? this.options.fail(e, this) : e;
+                this.options.fAfter && this.options.fAfter(e, this)
             }).finally(() => {
                 if (this.options.autoResume) {
                     setTimeout(() => {

@@ -113,19 +113,31 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
                     }
                 }
             };
-            xhr.addEventListener("abort", function () {
-                promise.canceled = true;
-            });
             try {
                 xhr.send(options.sendAsJSON ? JSON.stringify(options.body) : ((options.headers["Content-Type"] || "").includes("application/x-www-form-urlencoded") ? params(options.body, true).slice(1, Infinity) : options.body));
             } catch (e) {
                 console.error(e)
             }
         })
-        promise.cancel = function () {
+        promise.canceled = false;
+        promise.cancel = function (passive = false) {
             promise.tryCancel = true;
             tryCancel = true;
             xhr.abort();
+            return new Promise((resolve, reject) => {
+                if (xhr.readyState == 0) {
+                    let errorMsg = "Cancellation failed,the XMLHttpRequest client open() method hasn't been called yet.";
+                    resolve([false, errorMsg]);
+                } else if (xhr.readyState == 4) {
+                    let errorMsg = "Cancellation failed,the XMLHttpRequest client fetch operation was complete already.";
+                    resolve([false, errorMsg]);
+                } else {
+                    xhr.addEventListener("abort", function () {
+                        promise.canceled = true;
+                        resolve([true, "Cancellation finished."])
+                    });
+                }
+            })
         };
         promise.xhr = xhr;
         return promise;

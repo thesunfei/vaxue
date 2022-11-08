@@ -7,11 +7,11 @@ var vaxue = {
     },
     Request: function (arg = {}, config = this.config || {}) {
         this.status = "ready";
-        this.ajaxStack = 0;
         this.uploadProgress = 0;
         this.lastRequest = undefined;
         this.extra = undefined;
         this.options = {};
+        this.requests = [];
         this.xhr = (() => {
             let xhr = new XMLHttpRequest();
             xhr.upload.addEventListener("progress", (e) => {
@@ -109,6 +109,7 @@ var vaxue = {
                 this.lastRequest.cancel();
             }
             this.lastRequest = ajax(this.options, this.config);
+            this.requests.push(this.lastRequest);
             this.lastRequest.then(res => {
                 this.status = this.options.hasOwnProperty("successFlag") ? this.options.successFlag : "success";
                 this.options.sBefore && this.options.sBefore(res, this);
@@ -119,6 +120,7 @@ var vaxue = {
                 return res;
             }).catch(e => {
                 this.status = this.options.hasOwnProperty("failFlag") ? this.options.failFlag : "fail";
+                this.options.fBefore && this.options.fBefore(e, this)
                 this.res = this.response = this.options.fail ? this.options.fail(e, this) : e;
                 this.options.fAfter && this.options.fAfter(e, this)
             }).finally(() => {
@@ -129,6 +131,12 @@ var vaxue = {
                 }
             })
             return this.lastRequest;
+        };
+        this.cancelLast = () => {
+            return this.lastRequest.cancel()
+        };
+        this.cancelAll = () => {
+            return Promise.all(this.requests.map(v => v.cancel()));
         };
         !this.options.manual && setTimeout(this.send, 0);
         this.retry = (extra) => {

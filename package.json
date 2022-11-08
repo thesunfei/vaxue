@@ -1,7 +1,7 @@
 {
   "name": "vaxue",
-  "version": "1.2.18",
-  "description": "Promise based AJAX client for the browser,especially optimized for Vue.js",
+  "version": "1.3.0",
+  "description": "Promise based AJAX client for web browsers,especially optimized for Vue.js",
   "keywords": ["ajax","vue","promise"],
   "main": "index.js",
   "scripts": {

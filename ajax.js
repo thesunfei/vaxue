@@ -91,12 +91,27 @@ export default function (arg = {}, config = this.config || {}) { //main ajax req
                     //reserved for future function
                 } else if (xhr.readyState == 4) {
                     var response = xhr.response;
-                    if (options.responseType == "json" && typeof response == "string") { //fixing for IE
+                    if (options.responseType.toLowerCase() == "json" && typeof response == "string") { //fixing for IE
                         try {
                             response = JSON.parse(response)
                         } catch (e) {
                             console.error(e)
                         }
+                    }
+                    if (options.responseType.toLowerCase() == "headers") {
+                        try {
+                            response = {};
+                            let headers = xhr.getAllResponseHeaders().split("\n").filter(v => v);
+                            headers.forEach(header => {
+                                let keyValue = header.split(":");
+                                response[keyValue[0]] = (keyValue[1] || "").trim();
+                            })
+                        } catch (e) {
+                            response = {}
+                        }
+                    }
+                    if (options.responseType.toLowerCase() == "xhr") {
+                        response = xhr;
                     }
                     if (options.successCodes.indexOf(xhr.status) != -1) {
                         if (typeof response == "object" && options.strictJSON) {

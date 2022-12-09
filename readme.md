@@ -167,7 +167,7 @@ vaxue.get({ url: "/" });
   headers: {'Content-type': 'application/json'},
   // "sendAsJSON" will convert request body to JSON string,the default is false
   sendAsJSON: true,
-  // "responseType" indicates the type of data that the server will respond with,available options are:"arraybuffer","blob","document","json","text". The default is "text"
+  // "responseType" indicates the type of data that the server will respond with,available options are:"arraybuffer","blob","document","json","text","head","xhr". The default is "text"
   responseType: "json",
   // "successCodes" defines the success codes of response status,with array of numbers,if the response status was not included by the codes,the request will result in "fail".The default is [200,304],the type of the values in the array must be number
   successCodes: [200,304],
